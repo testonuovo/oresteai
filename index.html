@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oreste AI</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0b1b3a;
+color:white;
+text-align:center;
+}
+
+nav{
+background:blue;
+padding:15px;
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:15px;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+cursor:pointer;
+}
+
+.page{display:none;padding:20px;}
+.active{display:block;}
+
+.card{
+background:blue;
+padding:20px;
+border-radius:15px;
+margin:20px auto;
+max-width:500px;
+}
+
+.avatar img{
+width:150px;
+height:150px;
+border-radius:50%;
+box-shadow:0 0 15px #00f2ff;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:10px;
+background:#0071e3;
+color:white;
+cursor:pointer;
+margin:5px;
+}
+
+input{
+padding:10px;
+border-radius:10px;
+width:70%;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Oreste AI</h1>
+
+<nav>
+<a onclick="show('home')">Home</a>
+<a onclick="show('assistant')">Assistente</a>
+<a onclick="show('download')">Download</a>
+<a onclick="show('features')">Funzioni</a>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active">
+
+<div class="avatar">
+<img src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" alt="Avatar">
+</div>
+
+<div class="card">
+<h2 id="title"></h2>
+<p id="subtitle"></p>
+</div>
+
+<div class="card">
+<p id="datetime"></p>
+</div>
+
+</div>
+
+<!-- ASSISTENTE -->
+<div id="assistant" class="page">
+
+<div class="avatar">
+<img src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" alt="Avatar">
+</div>
+
+<div class="card">
+
+<h2>Assistente vocale</h2>
+
+<p id="status">🟢 Pronto</p>
+
+<input id="input" placeholder="Scrivi comando...">
+
+<br>
+
+<button onclick="run()">Invia</button>
+<button onclick="voice()">🎤 Parla</button>
+
+</div>
+
+<div class="card">
+<p id="datetime2"></p>
+</div>
+
+</div>
+
+<!-- DOWNLOAD -->
+<div id="download" class="page">
+<div class="card">
+<h2>Download</h2>
+<button onclick="downloadSmart('chrome')">Scarica Chrome</button>
+<button onclick="downloadSmart('vlc')">Scarica VLC</button>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div id="features" class="page">
+<div class="card">
+✔ Voice AI<br>
+✔ Avatar<br>
+✔ Download smart<br>
+✔ Browser control<br>
+✔ Data & Ora
+</div>
+</div>
+
+<script>
+
+let currentPage="home";
+
+const t={
+it:{
+title:"Benvenuto in Oreste AI",
+subtitle:"Assistente vocale intelligente",
+google:"Apro Google",
+search:"Cerco",
+not:"Non ho capito"
+}
+};
+
+let lang="it";
+
+/* NAV */
+function show(p){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+document.getElementById(p).classList.add("active");
+currentPage=p;
+}
+
+/* UI */
+function updateUI(){
+document.getElementById("title").innerText=t[lang].title;
+document.getElementById("subtitle").innerText=t[lang].subtitle;
+}
+
+/* VOCE */
+function speak(text){
+const msg=new SpeechSynthesisUtterance(text);
+msg.lang="it-IT";
+speechSynthesis.cancel();
+speechSynthesis.speak(msg);
+}
+
+/* ORA */
+function updateDateTime(){
+const now=new Date();
+const txt="📅 "+now.toLocaleDateString("it-IT")+" | ⏰ "+now.toLocaleTimeString("it-IT");
+
+document.getElementById("datetime").innerText=txt;
+document.getElementById("datetime2").innerText=txt;
+}
+setInterval(updateDateTime,1000);
+
+/* MICROFONO */
+function voice(){
+
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SpeechRecognition){
+speak("Microfono non supportato");
+return;
+}
+
+const recognition=new SpeechRecognition();
+recognition.lang="it-IT";
+
+document.getElementById("status").innerText="🎤 Ascolto...";
+
+recognition.start();
+
+recognition.onresult=(e)=>{
+let text=e.results[0][0].transcript;
+document.getElementById("input").value=text;
+handle(text);
+};
+
+recognition.onend=()=>{
+document.getElementById("status").innerText="🟢 Pronto";
+};
+}
+
+/* INPUT */
+function run(){
+handle(document.getElementById("input").value);
+}
+
+/* DOWNLOAD SMART */
+function downloadSmart(text){
+
+text=(text||"").toLowerCase().trim();
+
+if(text.includes("chrome")){
+window.open("https://www.google.com/chrome/");
+speak("scarico chrome");
+return;
+}
+
+if(text.includes("firefox")){
+window.open("https://www.mozilla.org/firefox/");
+speak("scarico firefox");
+return;
+}
+
+if(text.includes("vlc")){
+window.open("https://www.videolan.org/vlc/");
+speak("scarico vlc");
+return;
+}
+
+if(text.includes("musica") || text.includes("canzone")){
+window.open("https://www.youtube.com");
+speak("Apro musica");
+return;
+}
+
+window.open("https://google.com/search?q="+encodeURIComponent(text+" download"));
+speak("Cerco download di "+text);
+}
+
+/* COMANDI */
+function handle(text){
+
+text=(text||"").toLowerCase().trim();
+
+if(text.startsWith("oreste")){
+speak("Ti ascolto");
+return;
+}
+
+if(text.includes("google")){
+window.open("https://google.com");
+speak(t[lang].google);
+return;
+}
+
+if(text.startsWith("apri ")){
+let site=text.replace("apri ","").trim();
+
+if(!site.includes(".")){
+window.open("https://google.com/search?q="+encodeURIComponent(site));
+speak("Cerco "+site);
+return;
+}
+
+if(!site.startsWith("http")){
+site="https://"+site;
+}
+
+window.open(site);
+speak("Apro "+site);
+return;
+}
+
+if(text.startsWith("cerca ") || text.startsWith("trova ")){
+let q=text.replace("cerca ","").replace("trova ","");
+window.open("https://google.com/search?q="+encodeURIComponent(q));
+speak(t[lang].search+" "+q);
+return;
+}
+
+if(text.startsWith("scarica ") || text.startsWith("download ")){
+downloadSmart(text);
+return;
+}
+
+speak(t[lang].not);
+}
+
+/* START */
+window.onload=()=>{
+updateUI();
+updateDateTime();
+setTimeout(()=>speak(t[lang].title),800);
+};
+
+</script>
+
+</body>
+</html>
