@@ -88,11 +88,16 @@ width:70%;
 
 <div class="card">
 <h2>Benvenuto in Oreste AI</h2>
-<p>Assistente vocale intelligente</p>
+<p>Assistente vocale intelligente nel browser</p>
 </div>
 
 <div class="card">
 <p id="datetime"></p>
+</div>
+
+<div class="card">
+<h2>Meteo</h2>
+<p id="weather">Caricamento meteo...</p>
 </div>
 
 </div>
@@ -122,10 +127,7 @@ width:70%;
 <div class="card">
 <p id="datetime2"></p>
 </div>
-<div class="card">
-<h2>Meteo</h2>
-<p id="weather">Caricamento meteo...</p>
-</div>
+
 </div>
 
 <!-- DOWNLOAD -->
@@ -143,7 +145,8 @@ width:70%;
 ✔ Voice AI<br>
 ✔ Browser Control<br>
 ✔ Download smart<br>
-✔ Multifunzione
+✔ Meteo live<br>
+✔ Data e ora
 </div>
 </div>
 
@@ -166,11 +169,17 @@ speechSynthesis.cancel();
 speechSynthesis.speak(msg);
 }
 
-/* ORA */
+/* ORA + DATA */
 function updateDateTime(){
 const now = new Date();
 
-const optionsDate = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+const optionsDate = {
+weekday:'long',
+year:'numeric',
+month:'long',
+day:'numeric'
+};
+
 const date = now.toLocaleDateString("it-IT", optionsDate);
 const time = now.toLocaleTimeString("it-IT");
 
@@ -180,6 +189,36 @@ document.getElementById("datetime").innerText = txt;
 document.getElementById("datetime2").innerText = txt;
 }
 setInterval(updateDateTime,1000);
+
+/* METEO */
+async function getWeather(){
+
+try{
+
+const url = "https://api.open-meteo.com/v1/forecast?latitude=40.8518&longitude=14.2681&current_weather=true";
+
+const res = await fetch(url);
+const data = await res.json();
+
+const w = data.current_weather;
+
+let desc="";
+
+if(w.weathercode===0) desc="☀️ Sereno";
+else if(w.weathercode<=3) desc="⛅ Poco nuvoloso";
+else if(w.weathercode<=48) desc="☁️ Nuvoloso";
+else if(w.weathercode<=67) desc="🌧️ Pioggia";
+else desc="🌦️ Variabile";
+
+document.getElementById("weather").innerText =
+desc + " | 🌡️ " + w.temperature + "°C";
+
+}catch(e){
+document.getElementById("weather").innerText="Meteo non disponibile";
+}
+
+}
+
 /* MICROFONO */
 function voice(){
 
@@ -206,6 +245,7 @@ handle(text);
 recognition.onend=()=>{
 document.getElementById("status").innerText="🟢 Pronto";
 };
+
 }
 
 /* INPUT */
@@ -245,16 +285,7 @@ window.open("https://www.google.com","_blank");
 speak("Apro Google");
 return;
 }
-if(text.includes("canva")){
-window.open("https://www.canva.com/","_blank");
-speak("Apro Canva");
-return;
-}
-if(text.includes("youtube")){
-window.open("https://www.youtube.com","_blank");
-speak("Apro Youtube");
-return;
-}
+
 /* APRI */
 if(text.startsWith("apri ")){
 
@@ -320,44 +351,12 @@ return;
 speak("Dimmi un comando");
 
 }
-async function getWeather(){
 
-try{
-
-// Napoli come default (puoi cambiarla)
-const url = "https://api.open-meteo.com/v1/forecast?latitude=40.8518&longitude=14.2681&current_weather=true";
-
-const res = await fetch(url);
-const data = await res.json();
-
-const w = data.current_weather;
-
-let desc = "";
-
-if(w.weathercode === 0) desc = "☀️ Sereno";
-else if(w.weathercode <= 3) desc = "⛅ Poco nuvoloso";
-else if(w.weathercode <= 48) desc = "☁️ Nuvoloso";
-else if(w.weathercode <= 67) desc = "🌧️ Pioggia";
-else desc = "🌦️ Variabile";
-
-document.getElementById("weather").innerText =
-desc + " | 🌡️ " + w.temperature + "°C";
-
-}catch(e){
-document.getElementById("weather").innerText = "Meteo non disponibile";
-}
-
-}
-
-window.onload = ()=>{
+/* START */
+window.onload = () => {
 updateDateTime();
 getWeather();
-setTimeout(()=>speak("Oreste AI pronto"),800);
-};
-/* START */
-window.onload=()=>{
-updateDateTime();
-setTimeout(()=>speak("Benvenuto,sono Oreste AI"),800);
+setTimeout(()=>speak("Benvenuto in Oreste AI"),800);
 };
 
 </script>
