@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oreste AI</title>
+<title>Oreste AI + OS</title>
 
 <style>
 body{
@@ -20,7 +19,6 @@ background:blue;
 padding:15px;
 display:flex;
 justify-content:center;
-flex-wrap:wrap;
 gap:15px;
 }
 
@@ -42,11 +40,10 @@ margin:20px auto;
 max-width:500px;
 }
 
-.avatar img{
-width:150px;
-height:150px;
-border-radius:50%;
-box-shadow:0 0 15px #00f2ff;
+input{
+padding:10px;
+border-radius:10px;
+width:70%;
 }
 
 button{
@@ -59,13 +56,17 @@ cursor:pointer;
 margin:5px;
 }
 
-input{
-padding:10px;
-border-radius:10px;
-width:70%;
+#avatar{
+width:140px;
+border-radius:50%;
+transition:0.2s;
+}
+
+.speaking{
+box-shadow:0 0 25px #00f2ff;
+transform:scale(1.05);
 }
 </style>
-
 </head>
 
 <body>
@@ -75,29 +76,20 @@ width:70%;
 <nav>
 <a onclick="show('home')">Home</a>
 <a onclick="show('assistant')">Assistente</a>
-<a onclick="show('download')">Download</a>
-<a onclick="show('features')">Funzioni</a>
+<a onclick="openOS()">Oreste OS</a>
 </nav>
 
 <!-- HOME -->
 <div id="home" class="page active">
 
-<div class="avatar">
-<img src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" alt="Avatar">
-</div>
-
 <div class="card">
-<h2>Benvenuto in Oreste AI</h2>
-<p>Assistente vocale intelligente nel browser</p>
+<img id="avatar" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
+<h2>Oreste AI</h2>
+<p>Assistente vocale + OS + Browser</p>
 </div>
 
 <div class="card">
 <p id="datetime"></p>
-</div>
-
-<div class="card">
-<h2>Meteo</h2>
-<p id="weather">Caricamento meteo...</p>
 </div>
 
 </div>
@@ -105,258 +97,247 @@ width:70%;
 <!-- ASSISTENTE -->
 <div id="assistant" class="page">
 
-<div class="avatar">
-<img src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" alt="Avatar">
-</div>
-
 <div class="card">
+<img id="avatar2" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" style="width:120px;border-radius:50%;">
 
 <h2>Assistente vocale</h2>
 
-<p id="status">🟢 Pronto</p>
-
 <input id="input" placeholder="Scrivi comando...">
-
 <br>
 
 <button onclick="run()">Invia</button>
 <button onclick="voice()">🎤 Parla</button>
 
-</div>
-
-<div class="card">
-<p id="datetime2"></p>
+<p id="status">🟢 Pronto</p>
 </div>
 
 </div>
 
-<!-- DOWNLOAD -->
-<div id="download" class="page">
-<div class="card">
-<h2>Download</h2>
-<button onclick="downloadSmart('chrome')">Chrome</button>
-<button onclick="downloadSmart('vlc')">VLC</button>
-</div>
+<!-- OS -->
+<div id="os" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:#111;
+color:white;
+z-index:999;
+padding:20px;
+">
+
+<h1>Oreste OS</h1>
+<button onclick="openBrowser()">🌐 Oreste OS Browser</button>
+<button onclick="closeOS()">Chiudi OS</button>
 </div>
 
-<!-- FEATURES -->
-<div id="features" class="page">
-<div class="card">
-✔ Voice AI<br>
-✔ Browser Control<br>
-✔ Download smart<br>
-✔ Meteo live<br>
-✔ Data e ora
-</div>
+<!-- BROWSER (SEMPLICE E FUNZIONANTE) -->
+<div id="browser" style="
+display:none;
+position:fixed;
+top:120px;
+left:50%;
+transform:translateX(-50%);
+background:blue;
+padding:15px;
+z-index:1000;
+width:90%;
+max-width:500px;
+border-radius:10px;
+">
+
+<h3><img src="logo.svg" width="50" height="50"><br><br><center>Oreste OS Browser</center></h3>
+
+<input id="url" placeholder="google.com">
+<button onclick="go()">Apri</button>
+
+<button onclick="closeBrowser()">Chiudi</button>
 </div>
 
 <script>
-
-let currentPage="home";
 
 /* NAV */
 function show(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
-currentPage=p;
 }
 
-/* VOCE */
+/* VOCE + AVATAR */
 function speak(text){
-const msg=new SpeechSynthesisUtterance(text);
-msg.lang="it-IT";
+
+const avatar = document.getElementById("avatar");
+const avatar2 = document.getElementById("avatar2");
+
+const msg = new SpeechSynthesisUtterance(text);
+msg.lang = "it-IT";
+
+msg.onstart = () => {
+if(avatar) avatar.classList.add("speaking");
+if(avatar2) avatar2.classList.add("speaking");
+};
+
+msg.onend = () => {
+if(avatar) avatar.classList.remove("speaking");
+if(avatar2) avatar2.classList.remove("speaking");
+};
+
 speechSynthesis.cancel();
 speechSynthesis.speak(msg);
 }
 
-/* ORA + DATA */
-function updateDateTime(){
-const now = new Date();
+/* DATA */
+setInterval(()=>{
+document.getElementById("datetime").innerText =
+new Date().toLocaleString("it-IT");
+},1000);
 
-const optionsDate = {
-weekday:'long',
-year:'numeric',
-month:'long',
-day:'numeric'
-};
-
-const date = now.toLocaleDateString("it-IT", optionsDate);
-const time = now.toLocaleTimeString("it-IT");
-
-const txt = "📅 " + date + " | ⏰ " + time;
-
-document.getElementById("datetime").innerText = txt;
-document.getElementById("datetime2").innerText = txt;
-}
-setInterval(updateDateTime,1000);
-
-/* METEO */
-async function getWeather(){
-
-try{
-
-const url = "https://api.open-meteo.com/v1/forecast?latitude=40.8518&longitude=14.2681&current_weather=true";
-
-const res = await fetch(url);
-const data = await res.json();
-
-const w = data.current_weather;
-
-let desc="";
-
-if(w.weathercode===0) desc="☀️ Sereno";
-else if(w.weathercode<=3) desc="⛅ Poco nuvoloso";
-else if(w.weathercode<=48) desc="☁️ Nuvoloso";
-else if(w.weathercode<=67) desc="🌧️ Pioggia";
-else desc="🌦️ Variabile";
-
-document.getElementById("weather").innerText =
-desc + " | 🌡️ " + w.temperature + "°C";
-
-}catch(e){
-document.getElementById("weather").innerText="Meteo non disponibile";
+/* OS */
+function openOS(){
+document.getElementById("os").style.display="block";
+speak("Apro Oreste OS");
 }
 
+function closeOS(){
+document.getElementById("os").style.display="none";
 }
 
-/* MICROFONO */
-function voice(){
+/* BROWSER (VERSIONE DEFINITIVA) */
+function openBrowser(){
+document.getElementById("browser").style.display="block";
+}
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+function closeBrowser(){
+document.getElementById("browser").style.display="none";
+}
 
-if(!SpeechRecognition){
-speak("Microfono non supportato");
+function go(){
+
+let url = document.getElementById("url").value.trim();
+
+if(!url){
+speak("Inserisci un sito");
 return;
 }
 
-const recognition = new SpeechRecognition();
-recognition.lang = "it-IT";
-
-document.getElementById("status").innerText="🎤 Ascolto...";
-
-recognition.start();
-
-recognition.onresult=(e)=>{
-let text=e.results[0][0].transcript;
-document.getElementById("input").value=text;
-handle(text);
-};
-
-recognition.onend=()=>{
-document.getElementById("status").innerText="🟢 Pronto";
-};
-
+if(!url.startsWith("http")){
+url = "https://" + url;
 }
 
-/* INPUT */
+/* SOLUZIONE 100% FUNZIONANTE */
+window.open(url, "_blank");
+
+speak("Apro il sito");
+}
+
+/* ASSISTENTE */
 function run(){
 handle(document.getElementById("input").value);
 }
 
-/* DOWNLOAD SMART */
-function downloadSmart(text){
+function voice(){
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(!SR){ speak("Microfono non supportato"); return; }
 
-text=text.toLowerCase();
+const r = new SR();
+r.lang = "it-IT";
 
-if(text.includes("chrome")){
-window.open("https://www.google.com/chrome/");
-speak("Scarico Chrome");
-return;
+document.getElementById("status").innerText="🎤 Ascolto...";
+
+r.start();
+
+r.onresult = (e)=>{
+const text = e.results[0][0].transcript;
+document.getElementById("input").value = text;
+handle(text);
+};
+
+r.onend = ()=>{
+document.getElementById("status").innerText="🟢 Pronto";
+};
 }
 
-if(text.includes("vlc")){
-window.open("https://www.videolan.org/vlc/");
-speak("Scarico VLC");
-return;
-}
-
-window.open("https://www.google.com/search?q="+encodeURIComponent(text+" download"));
-speak("Cerco download di "+text);
-}
-
-/* ASSISTENTE */
+/* COMANDI */
 function handle(text){
 
-text=(text||"").toLowerCase().trim();
+text = (text || "").toLowerCase().trim();
+if(text.startsWith("apri ")){
 
-/* GOOGLE */
-if(text.includes("google")){
+let site = text.replace("apri ","").trim();
+
+/* CASI SPECIALI SOCIAL / APP */
+if(site.includes("google")){
 window.open("https://www.google.com","_blank");
 speak("Apro Google");
 return;
 }
 
-/* APRI */
-if(text.startsWith("apri ")){
-
-let site=text.replace("apri ","");
-
-if(!site.includes(".")){
-window.open("https://www.google.com/search?q="+encodeURIComponent(site),"_blank");
-speak("Cerco "+site);
+if(site.includes("youtube")){
+window.open("https://www.youtube.com","_blank");
+speak("Apro YouTube");
 return;
 }
 
-if(!site.startsWith("http")){
-site="https://"+site;
+if(site.includes("canva")){
+window.open("https://www.canva.com","_blank");
+speak("Apro Canva");
+return;
+}
+
+if(site.includes("linkedin")){
+window.open("https://www.linkedin.com","_blank");
+speak("Apro LinkedIn");
+return;
+}
+
+/* SE NON È URL VALIDO → AGGIUNGE HTTPS SOLO UNA VOLTA */
+if(!site.startsWith("http://") && !site.startsWith("https://")){
+site = "https://" + site;
 }
 
 window.open(site,"_blank");
-speak("Apro "+site);
+speak("Apro " + site);
+return;
+}
+if(text.includes("google")){
+window.open("https://google.com","_blank");
+speak("Apro Google");
 return;
 }
 
-/* CERCA */
-if(text.startsWith("cerca ") || text.startsWith("trova ")){
-
-let q=text.replace("cerca ","").replace("trova ","");
-
-window.open("https://www.google.com/search?q="+encodeURIComponent(q),"_blank");
-speak("Cerco "+q);
-return;
-}
-
-/* SOCIAL */
 if(text.includes("youtube")){
 window.open("https://youtube.com","_blank");
 speak("Apro YouTube");
 return;
 }
 
-if(text.includes("tiktok")){
-window.open("https://tiktok.com","_blank");
-speak("Apro TikTok");
+if(text.includes("apri os") || text.includes("oreste os")){
+openOS();
 return;
 }
 
-if(text.includes("instagram")){
-window.open("https://instagram.com","_blank");
-speak("Apro Instagram");
+if(text.includes("browser")){
+openBrowser();
+speak("Apro il browser");
 return;
 }
 
-if(text.includes("canva")){
-window.open("https://www.canva.com","_blank");
-speak("Apro Canva");
+if(text.startsWith("apri ")){
+let site = text.replace("apri ","");
+if(!site.startsWith("http")) site = "https://" + site;
+window.open(site,"_blank");
+speak("Apro " + site);
 return;
 }
 
-/* FALLBACK */
 if(text.length>0){
-window.open("https://www.google.com/search?q="+encodeURIComponent(text),"_blank");
-speak("Cerco su Google");
-return;
+window.open("https://google.com/search?q=" + encodeURIComponent(text));
+speak("Cerco " + text);
+}
 }
 
-speak("Dimmi un comando");
-
-}
-
-/* START */
-window.onload = () => {
-updateDateTime();
-getWeather();
-setTimeout(()=>speak("Benvenuto in Oreste AI"),800);
+window.onload = ()=>{
+speak("Benvenuto in Oreste AI");
 };
 
 </script>
