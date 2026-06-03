@@ -87,8 +87,8 @@ width:70%;
 </div>
 
 <div class="card">
-<h2 id="title"></h2>
-<p id="subtitle"></p>
+<h2>Benvenuto in Oreste AI</h2>
+<p>Assistente vocale intelligente</p>
 </div>
 
 <div class="card">
@@ -122,15 +122,18 @@ width:70%;
 <div class="card">
 <p id="datetime2"></p>
 </div>
-
+<div class="card">
+<h2>Meteo</h2>
+<p id="weather">Caricamento meteo...</p>
+</div>
 </div>
 
 <!-- DOWNLOAD -->
 <div id="download" class="page">
 <div class="card">
 <h2>Download</h2>
-<button onclick="downloadSmart('chrome')">Scarica Chrome</button>
-<button onclick="downloadSmart('vlc')">Scarica VLC</button>
+<button onclick="downloadSmart('chrome')">Chrome</button>
+<button onclick="downloadSmart('vlc')">VLC</button>
 </div>
 </div>
 
@@ -138,10 +141,9 @@ width:70%;
 <div id="features" class="page">
 <div class="card">
 ✔ Voice AI<br>
-✔ Avatar<br>
+✔ Browser Control<br>
 ✔ Download smart<br>
-✔ Browser control<br>
-✔ Data & Ora
+✔ Multifunzione
 </div>
 </div>
 
@@ -149,29 +151,11 @@ width:70%;
 
 let currentPage="home";
 
-const t={
-it:{
-title:"Benvenuto in Oreste AI",
-subtitle:"Assistente vocale intelligente",
-google:"Apro Google",
-search:"Cerco",
-not:"Non ho capito"
-}
-};
-
-let lang="it";
-
 /* NAV */
 function show(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
 currentPage=p;
-}
-
-/* UI */
-function updateUI(){
-document.getElementById("title").innerText=t[lang].title;
-document.getElementById("subtitle").innerText=t[lang].subtitle;
 }
 
 /* VOCE */
@@ -184,25 +168,30 @@ speechSynthesis.speak(msg);
 
 /* ORA */
 function updateDateTime(){
-const now=new Date();
-const txt="📅 "+now.toLocaleDateString("it-IT")+" | ⏰ "+now.toLocaleTimeString("it-IT");
+const now = new Date();
 
-document.getElementById("datetime").innerText=txt;
-document.getElementById("datetime2").innerText=txt;
+const optionsDate = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+const date = now.toLocaleDateString("it-IT", optionsDate);
+const time = now.toLocaleTimeString("it-IT");
+
+const txt = "📅 " + date + " | ⏰ " + time;
+
+document.getElementById("datetime").innerText = txt;
+document.getElementById("datetime2").innerText = txt;
 }
 setInterval(updateDateTime,1000);
-
 /* MICROFONO */
 function voice(){
 
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 if(!SpeechRecognition){
 speak("Microfono non supportato");
 return;
 }
 
-const recognition=new SpeechRecognition();
-recognition.lang="it-IT";
+const recognition = new SpeechRecognition();
+recognition.lang = "it-IT";
 
 document.getElementById("status").innerText="🎤 Ascolto...";
 
@@ -227,57 +216,52 @@ handle(document.getElementById("input").value);
 /* DOWNLOAD SMART */
 function downloadSmart(text){
 
-text=(text||"").toLowerCase().trim();
+text=text.toLowerCase();
 
 if(text.includes("chrome")){
 window.open("https://www.google.com/chrome/");
-speak("scarico chrome");
-return;
-}
-
-if(text.includes("firefox")){
-window.open("https://www.mozilla.org/firefox/");
-speak("scarico firefox");
+speak("Scarico Chrome");
 return;
 }
 
 if(text.includes("vlc")){
 window.open("https://www.videolan.org/vlc/");
-speak("scarico vlc");
+speak("Scarico VLC");
 return;
 }
 
-if(text.includes("musica") || text.includes("canzone")){
-window.open("https://www.youtube.com");
-speak("Apro musica");
-return;
-}
-
-window.open("https://google.com/search?q="+encodeURIComponent(text+" download"));
+window.open("https://www.google.com/search?q="+encodeURIComponent(text+" download"));
 speak("Cerco download di "+text);
 }
 
-/* COMANDI */
+/* ASSISTENTE */
 function handle(text){
 
 text=(text||"").toLowerCase().trim();
 
-if(text.startsWith("oreste")){
-speak("Ti ascolto");
-return;
-}
-
+/* GOOGLE */
 if(text.includes("google")){
-window.open("https://google.com");
-speak(t[lang].google);
+window.open("https://www.google.com","_blank");
+speak("Apro Google");
 return;
 }
-
+if(text.includes("canva")){
+window.open("https:/www.canva.com","_blank");
+speak("Apro Canva");
+return;
+}
+if(text.includes("youtube")){
+window.open("https://www.youtube.com","_blank");
+speak("Apro Youtube");
+return;
+}
+/* APRI */
 if(text.startsWith("apri ")){
-let site=text.replace("apri ","").trim();
+
+let site=text.replace("apri ","");
 
 if(!site.includes(".")){
-window.open("https://google.com/search?q="+encodeURIComponent(site));
+window.open("https://www.google.com/search?q="+encodeURIComponent(site),"_blank");
 speak("Cerco "+site);
 return;
 }
@@ -286,31 +270,94 @@ if(!site.startsWith("http")){
 site="https://"+site;
 }
 
-window.open(site);
+window.open(site,"_blank");
 speak("Apro "+site);
 return;
 }
 
+/* CERCA */
 if(text.startsWith("cerca ") || text.startsWith("trova ")){
+
 let q=text.replace("cerca ","").replace("trova ","");
-window.open("https://google.com/search?q="+encodeURIComponent(q));
-speak(t[lang].search+" "+q);
+
+window.open("https://www.google.com/search?q="+encodeURIComponent(q),"_blank");
+speak("Cerco "+q);
 return;
 }
 
-if(text.startsWith("scarica ") || text.startsWith("download ")){
-downloadSmart(text);
+/* SOCIAL */
+if(text.includes("youtube")){
+window.open("https://youtube.com","_blank");
+speak("Apro YouTube");
 return;
 }
 
-speak(t[lang].not);
+if(text.includes("tiktok")){
+window.open("https://tiktok.com","_blank");
+speak("Apro TikTok");
+return;
 }
 
+if(text.includes("instagram")){
+window.open("https://instagram.com","_blank");
+speak("Apro Instagram");
+return;
+}
+
+if(text.includes("canva")){
+window.open("https://www.canva.com","_blank");
+speak("Apro Canva");
+return;
+}
+
+/* FALLBACK */
+if(text.length>0){
+window.open("https://www.google.com/search?q="+encodeURIComponent(text),"_blank");
+speak("Cerco su Google");
+return;
+}
+
+speak("Dimmi un comando");
+
+}
+async function getWeather(){
+
+try{
+
+// Napoli come default (puoi cambiarla)
+const url = "https://api.open-meteo.com/v1/forecast?latitude=40.8518&longitude=14.2681&current_weather=true";
+
+const res = await fetch(url);
+const data = await res.json();
+
+const w = data.current_weather;
+
+let desc = "";
+
+if(w.weathercode === 0) desc = "☀️ Sereno";
+else if(w.weathercode <= 3) desc = "⛅ Poco nuvoloso";
+else if(w.weathercode <= 48) desc = "☁️ Nuvoloso";
+else if(w.weathercode <= 67) desc = "🌧️ Pioggia";
+else desc = "🌦️ Variabile";
+
+document.getElementById("weather").innerText =
+desc + " | 🌡️ " + w.temperature + "°C";
+
+}catch(e){
+document.getElementById("weather").innerText = "Meteo non disponibile";
+}
+
+}
+
+window.onload = ()=>{
+updateDateTime();
+getWeather();
+setTimeout(()=>speak("Oreste AI pronto"),800);
+};
 /* START */
 window.onload=()=>{
-updateUI();
 updateDateTime();
-setTimeout(()=>speak(t[lang].title),800);
+setTimeout(()=>speak("Benvenuto,sono Oreste AI"),800);
 };
 
 </script>
