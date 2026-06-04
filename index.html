@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oreste AI + OS</title>
+<title>Oreste AI + OS + Storybook</title>
 
 <style>
 body{
@@ -14,7 +14,6 @@ color:white;
 text-align:center;
 }
 
-/* NAV */
 nav{
 background:blue;
 padding:15px;
@@ -24,26 +23,18 @@ gap:15px;
 align-items:center;
 }
 
-/* LOGO FIX DEFINITIVO (NO BORDI) */
 nav img{
 height:35px;
 border:0;
 outline:none;
 box-shadow:none;
-background:transparent;
-display:block;
 }
 
-/* IMMAGINI GENERALI PULITE */
-img{
-border:0;
-outline:none;
-box-shadow:none;
-}
-
-/* LINK */
 a{
-outline:none;
+color:white;
+text-decoration:none;
+font-weight:bold;
+cursor:pointer;
 }
 
 .page{display:none;padding:20px;}
@@ -57,12 +48,6 @@ margin:20px auto;
 max-width:500px;
 }
 
-input{
-padding:10px;
-border-radius:10px;
-width:70%;
-}
-
 button{
 padding:10px;
 border:none;
@@ -73,10 +58,17 @@ cursor:pointer;
 margin:5px;
 }
 
+input, textarea{
+padding:10px;
+width:80%;
+border-radius:10px;
+border:none;
+margin:5px;
+}
+
 #avatar{
 width:140px;
 border-radius:50%;
-transition:0.2s;
 }
 
 .speaking{
@@ -84,102 +76,103 @@ box-shadow:0 0 25px #00f2ff;
 transform:scale(1.05);
 }
 
-/* BROWSER */
-#browser{
-display:none;
-position:fixed;
-top:120px;
-left:50%;
-transform:translateX(-50%);
-background:blue;
-padding:15px;
-z-index:1000;
-width:90%;
-max-width:500px;
-border-radius:10px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>Oreste AI</h1>
-
-<nav>
-<img src="https://i.ibb.co/wHZ8KG6/logo.jpg?v=2" alt="logo">
-<a onclick="show('home')">Home</a>
-<a onclick="show('assistant')">Assistente</a>
-<a onclick="openOS()">Oreste OS</a>
-</nav>
-
-<!-- HOME -->
-<div id="home" class="page active">
-
-<div class="card">
-<img id="avatar" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
-<h2>Oreste AI</h2>
-<p>Assistente vocale + OS + Browser</p>
-</div>
-
-<div class="card">
-<p id="datetime"></p>
-</div>
-
-</div>
-
-<!-- ASSISTENTE -->
-<div id="assistant" class="page">
-
-<div class="card">
-<img id="avatar2" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" style="width:120px;border-radius:50%;">
-
-<h2>Assistente vocale</h2>
-
-<input id="input" placeholder="Scrivi comando...">
-<br>
-
-<button onclick="run()">Invia</button>
-<button onclick="voice()">🎤 Parla</button>
-
-<p id="status">🟢 Pronto</p>
-</div>
-
-</div>
-
-<!-- OS -->
-<div id="os" style="
+/* OS */
+#os{
 display:none;
 position:fixed;
 top:0;
 left:0;
 width:100vw;
 height:100vh;
-background:#111;
-color:white;
+background:blue;
 z-index:999;
 padding:20px;
-">
+}
 
-<h1>Oreste OS</h1>
-<button onclick="openBrowser()">🌐 Browser</button>
-<button onclick="closeOS()">Chiudi OS</button>
+.app{
+display:none;
+background:#1e3a8a;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Oreste AI + OS</h1>
+
+<nav>
+<img src="https://i.ibb.co/wHZ8KG6/logo.jpg?v=2">
+<a onclick="show('home')">Home</a>
+<a onclick="show('assistant')">Assistente</a>
+<a onclick="show('storybook')">Storybook</a>
+<a onclick="openOS()">OS</a>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active">
+<div class="card">
+<img id="avatar" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
+<h2>Oreste AI</h2>
+<p>AI + OS + Storybook</p>
+</div>
 </div>
 
-<!-- BROWSER -->
-<div id="browser">
+<!-- ASSISTENTE -->
+<div id="assistant" class="page">
+<div class="card">
+<img id="avatar2" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png" style="width:120px;border-radius:50%;">
+<h2>Assistente</h2>
 
-<h3>
-<img src="https://i.ibb.co/wHZ8KG6/logo.jpg?v=2"
-width="45"
-height="45"
-style="border-radius:10px;">
-<br><br>
-Oreste OS Browser
-</h3>
+<input id="input">
+<br>
+<button onclick="run()">Invia</button>
+<button onclick="voice()">🎤 Parla</button>
+<p id="status">Pronto</p>
+</div>
+</div>
 
-<input id="url" placeholder="google.com">
-<button onclick="go()">Apri</button>
-<button onclick="closeBrowser()">Chiudi</button>
+<!-- STORYBOOK -->
+<div id="storybook" class="page">
+<div class="card">
+<img id="storyImg" style="width:120px;border-radius:50%;">
+<h2 id="storyTitle"></h2>
+<p id="storyText"></p>
+
+<button onclick="prev()">⬅</button>
+<button onclick="next()">➡</button>
+</div>
+</div>
+
+<!-- OS -->
+<div id="os">
+
+<h2>Oreste OS</h2>
+
+<button onclick="showApp('calc')">Calcolatrice</button>
+<button onclick="showApp('notes')">Blocco Note</button>
+<button onclick="closeOS()">Chiudi</button>
+
+<div id="calc" class="app">
+<input id="a" placeholder="Numero 1">
+<input id="b" placeholder="Numero 2">
+<br>
+<button onclick="sum()">+</button>
+<button onclick="sub()">-</button>
+<button onclick="mul()">×</button>
+<button onclick="div()">÷</button>
+<p id="result"></p>
+</div>
+
+<div id="notes" class="app">
+<textarea id="note" rows="6"></textarea>
+<br>
+<button onclick="saveNote()">Salva</button>
+<button onclick="loadNote()">Carica</button>
+</div>
+
 </div>
 
 <script>
@@ -188,131 +181,170 @@ Oreste OS Browser
 function show(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
+
+if(p === "storybook"){
+render();
+}
 }
 
 /* VOCE */
 function speak(text){
+speechSynthesis.cancel();
+
 const msg = new SpeechSynthesisUtterance(text);
 msg.lang = "it-IT";
 
-const avatar = document.getElementById("avatar");
-const avatar2 = document.getElementById("avatar2");
+const a = document.getElementById("avatar");
+const a2 = document.getElementById("avatar2");
 
-msg.onstart = () => {
-if(avatar) avatar.classList.add("speaking");
-if(avatar2) avatar2.classList.add("speaking");
+msg.onstart = ()=>{
+if(a) a.classList.add("speaking");
+if(a2) a2.classList.add("speaking");
 };
 
-msg.onend = () => {
-if(avatar) avatar.classList.remove("speaking");
-if(avatar2) avatar2.classList.remove("speaking");
+msg.onend = ()=>{
+if(a) a.classList.remove("speaking");
+if(a2) a2.classList.remove("speaking");
 };
 
-speechSynthesis.cancel();
 speechSynthesis.speak(msg);
 }
 
-/* DATA */
-setInterval(()=>{
-document.getElementById("datetime").innerText =
-new Date().toLocaleString("it-IT");
-},1000);
+/* STORYBOOK */
+let pages = [
+{
+title:"Oreste AI",
+text:"Tutto nasce da un’idea di creare un assistente intelligente nel browser.",
+img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png"
+},
+{
+title:"Nascita",
+text:"Oreste AI prende vita come assistente vocale.",
+img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png"
+},
+{
+title:"Oreste OS",
+text:"Un sistema operativo web dentro il browser.",
+img:"https://i.ibb.co/wHZ8KG6/logo.jpg"
+},
+{
+title:"Oreste OS Browser",
+text:"Navigazione intelligente e comandi vocali.",
+img:"https://i.ibb.co/wHZ8KG6/logo.jpg"
+}
+];
+
+let i = 0;
+
+function render(){
+storyTitle.innerText = pages[i].title;
+storyText.innerText = pages[i].text;
+storyImg.src = pages[i].img;
+
+speak(pages[i].title + ". " + pages[i].text);
+}
+
+function next(){
+if(i < pages.length - 1){
+i++;
+render();
+}
+}
+
+function prev(){
+if(i > 0){
+i--;
+render();
+}
+}
 
 /* OS */
 function openOS(){
-document.getElementById("os").style.display="block";
-speak("Apro Oreste OS");
+os.style.display="block";
+autoLoad();
 }
 
 function closeOS(){
-document.getElementById("os").style.display="none";
+os.style.display="none";
 }
 
-/* BROWSER */
-function openBrowser(){
-document.getElementById("browser").style.display="block";
+function showApp(a){
+document.querySelectorAll(".app").forEach(x=>x.style.display="none");
+document.getElementById(a).style.display="block";
 }
 
-function closeBrowser(){
-document.getElementById("browser").style.display="none";
+/* CALC */
+function nums(){
+return [parseFloat(a.value)||0, parseFloat(b.value)||0];
 }
 
-function go(){
-let url = document.getElementById("url").value.trim();
+function sum(){let[x,y]=nums();result.innerText=x+y;}
+function sub(){let[x,y]=nums();result.innerText=x-y;}
+function mul(){let[x,y]=nums();result.innerText=x*y;}
+function div(){let[x,y]=nums();result.innerText=y?x/y:"error";}
 
-if(!url){
-speak("Inserisci un sito");
-return;
+/* NOTE */
+function saveNote(){
+localStorage.setItem("oreste_note", note.value);
 }
 
-if(!url.startsWith("http")){
-url = "https://" + url;
+function loadNote(){
+note.value = localStorage.getItem("oreste_note") || "";
 }
 
-window.open(url, "_blank");
-speak("Apro il sito");
+function autoLoad(){
+note.value = localStorage.getItem("oreste_note") || "";
 }
 
 /* ASSISTENTE */
-function run(){
-handle(document.getElementById("input").value);
-}
+function run(){handle(input.value);}
 
 function voice(){
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-if(!SR){ speak("Microfono non supportato"); return; }
+if(!SR){ speak("Non supportato"); return; }
 
 const r = new SR();
-r.lang = "it-IT";
+r.lang="it-IT";
 
-document.getElementById("status").innerText="🎤 Ascolto...";
+r.onresult = e=>{
+input.value = e.results[0][0].transcript;
+handle(input.value);
+};
+
 r.start();
-
-r.onresult = (e)=>{
-const text = e.results[0][0].transcript;
-document.getElementById("input").value = text;
-handle(text);
-};
-
-r.onend = ()=>{
-document.getElementById("status").innerText="🟢 Pronto";
-};
 }
 
 /* COMANDI */
-function handle(text){
+function handle(t){
+t = t.toLowerCase();
 
-text = (text || "").toLowerCase().trim();
-
-if(text.includes("google")){
-window.open("https://google.com","_blank");
+if(t.includes("google")){
+window.open("https://google.com");
 speak("Apro Google");
 return;
 }
 
-if(text.includes("youtube")){
-window.open("https://youtube.com","_blank");
+if(t.includes("youtube")){
+window.open("https://youtube.com");
 speak("Apro YouTube");
 return;
 }
 
-if(text.includes("apri os") || text.includes("oreste os")){
+if(t.includes("storybook")){
+show("storybook");
+return;
+}
+
+if(t.includes("os")){
 openOS();
 return;
 }
 
-if(text.includes("browser")){
-openBrowser();
-speak("Apro il browser");
-return;
+window.open("https://google.com/search?q=" + t);
+speak("Cerco " + t);
 }
 
-if(text.length>0){
-window.open("https://google.com/search?q=" + encodeURIComponent(text));
-speak("Cerco " + text);
-}
-}
-
+/* START */
 window.onload = ()=>{
 speak("Benvenuto in Oreste AI");
 };
