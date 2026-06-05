@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oreste AI + OS + Storybook</title>
-
+<meta name="description" content="Oreste AI è un assistente intelligente creato da Oreste De Chiara. Include OS, Storybook e AI conversazionale.">
+<meta name="author" content="Oreste De Chiara">
+<meta name="keywords" content="Oreste AI, AI italiana, assistente virtuale, Oreste De Chiara, chatbot italiano">
+<title>Oreste AI - Creato da Oreste De Chiara</title>
 <style>
 body{
 margin:0;
@@ -100,10 +102,37 @@ padding:20px;
 border-radius:10px;
 margin-top:10px;
 }
+
+/* PERSONAGGI */
+#stage{
+position:relative;
+height:200px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.character{
+width:120px;
+position:absolute;
+top:40px;
+left:-150px;
+transition:1s ease;
+}
+
+.enter{ left:40%; }
+.left{ left:-150px; }
+.right{ left:120%; }
+
 </style>
 </head>
 
 <body>
+
+<!-- STAGE -->
+<div id="stage">
+<img id="oreste" class="character" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
+<img id="virus" class="character" src="https://i.ibb.co/wHZ8KG6/logo.jpg">
+</div>
 
 <h1>Oreste AI + OS</h1>
 
@@ -120,7 +149,6 @@ margin-top:10px;
 <div class="card">
 <img id="avatar" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
 <h2>Oreste AI</h2>
-<p>AI + OS + Storybook</p>
 </div>
 </div>
 
@@ -160,10 +188,9 @@ margin-top:10px;
 
 <button onclick="showApp('calc')">Calcolatrice</button>
 <button onclick="showApp('notes')">Blocco Note</button>
-<button onclick="showApp('browser')">Browser</button>
+<button onclick="showApp('browser')">Oreste OS Browser</button>
 <button onclick="closeOS()">Chiudi</button>
 
-<!-- CALC -->
 <div id="calc" class="app">
 <input id="a">
 <input id="b">
@@ -174,7 +201,6 @@ margin-top:10px;
 <button onclick="div()">÷</button>
 </div>
 
-<!-- NOTE -->
 <div id="notes" class="app">
 <textarea id="note"></textarea>
 <br>
@@ -182,9 +208,7 @@ margin-top:10px;
 <button onclick="loadNote()">Carica</button>
 </div>
 
-<!-- BROWSER -->
 <div id="browser" class="app">
-<h3 id="browserTitle">🌐 Oreste Browser</h3>
 <input id="url">
 <button onclick="go()">Vai</button>
 </div>
@@ -206,7 +230,7 @@ render();
 }
 }
 
-/* SPEECH */
+/* VOCE */
 function speak(text){
 speechSynthesis.cancel();
 let msg=new SpeechSynthesisUtterance(text);
@@ -214,56 +238,57 @@ msg.lang="it-IT";
 speechSynthesis.speak(msg);
 }
 
-/* STORYBOOK */
-const pages=[
-{
-character:"Oreste AI",
-title:"Risveglio",
-text:"Mi sto attivando nel sistema.",
-img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",
-choices:[{t:"Continua",n:1}]
-},
-{
-character:"Oreste AI",
-title:"Sistema",
-text:"Sto analizzando il mondo digitale.",
-img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",
-choices:[{t:"Avanti",n:2}]
-},
-{
-character:"Virus",
-title:"Errore",
-text:"Qualcosa sta attaccando il sistema!",
-img:"https://i.ibb.co/wHZ8KG6/logo.jpg",
-choices:[{t:"Combatti",n:3}]
-},
-{
-character:"Oreste AI",
-title:"Battaglia",
-text:"Sto proteggendo il sistema.",
-img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",
-choices:[{t:"Vittoria",n:4}]
-},
-{
-character:"Oreste AI",
-title:"Fine",
-text:"Sistema salvato con successo.",
-img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",
-choices:[{t:"Restart",n:0}]
+/* PERSONAGGI */
+function moveCharacters(scene){
+let o=document.getElementById("oreste");
+let v=document.getElementById("virus");
+
+o.classList.remove("enter","left","right");
+v.classList.remove("enter","left","right");
+
+if(scene==="Risveglio"){
+o.classList.add("enter");
+v.classList.add("right");
 }
+if(scene==="Sistema"){
+o.classList.add("enter");
+v.classList.add("right");
+}
+if(scene==="Errore"){
+o.classList.add("left");
+v.classList.add("enter");
+}
+if(scene==="Battaglia"){
+o.classList.add("enter");
+v.classList.add("enter");
+}
+if(scene==="Fine"){
+o.classList.add("enter");
+v.classList.add("right");
+}
+}
+
+/* STORY */
+const pages=[
+{character:"Oreste AI",title:"Risveglio",text:"Mi sto attivando nel sistema.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Continua",n:1}]},
+{character:"Oreste AI",title:"Sistema",text:"Sto analizzando il mondo digitale.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Avanti",n:2}]},
+{character:"Virus",title:"Errore",text:"Qualcosa sta attaccando il sistema!",img:"https://i.ibb.co/wHZ8KG6/logo.jpg",choices:[{t:"Combatti",n:3}]},
+{character:"Oreste AI",title:"Battaglia",text:"Sto proteggendo il sistema.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Vittoria",n:4}]},
+{character:"Oreste AI",title:"Fine",text:"Sistema salvato con successo.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Restart",n:0}]}
 ];
 
 function render(){
 
 let p = pages[i];
 
-storyChar.innerText = p.character;
-storyTitle.innerText = p.title;
-storyText.innerText = p.text;
-storyImg.src = p.img;
+storyChar.innerText=p.character;
+storyTitle.innerText=p.title;
+storyText.innerText=p.text;
+storyImg.src=p.img;
+
+moveCharacters(p.title);
 
 document.getElementById("choices").innerHTML="";
-
 p.choices.forEach(c=>{
 let b=document.createElement("button");
 b.innerText=c.t;
@@ -282,16 +307,13 @@ card.classList.add("page-turn");
 function next(){if(i<pages.length-1){i++;render();}}
 function prev(){if(i>0){i--;render();}}
 
-/* OS */
-function openOS(){os.style.display="block";}
-function closeOS(){os.style.display="none";}
+/* OS FIX */
+function openOS(){document.getElementById("os").style.display="block";}
+function closeOS(){document.getElementById("os").style.display="none";}
+
 function showApp(a){
 document.querySelectorAll(".app").forEach(x=>x.style.display="none");
 document.getElementById(a).style.display="block";
-
-if(a==="browser"){
-setBrowserTitle("🌐 Oreste Browser - Pronto");
-}
 }
 
 /* CALC */
@@ -301,12 +323,18 @@ function mul(){result.innerText=+a.value * +b.value;}
 function div(){result.innerText=+a.value / +b.value;}
 
 /* NOTE */
-function saveNote(){localStorage.setItem("note",note.value);}
-function loadNote(){note.value=localStorage.getItem("note")||"";}
+function saveNote(){
+localStorage.setItem("note",note.value);
 
-/* BROWSER TITLE */
-function setBrowserTitle(t){
-document.getElementById("browserTitle").innerText=t;
+const blob=new Blob([note.value],{type:"text/plain"});
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="nota-oreste.txt";
+a.click();
+}
+
+function loadNote(){
+note.value=localStorage.getItem("note")||"";
 }
 
 /* BROWSER */
