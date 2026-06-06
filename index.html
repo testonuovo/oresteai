@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oreste AI + OS + Storybook</title>
+<title>Oreste AI - Assistente vocale italiano online gratis</title>
 
 <style>
 body{
@@ -16,198 +16,140 @@ text-align:center;
 
 nav{
 background:blue;
-padding:15px;
+padding:10px;
 display:flex;
 justify-content:center;
-gap:15px;
-align-items:center;
+gap:10px;
 }
 
-nav img{height:35px;}
-
-a{
+button{
+padding:8px;
+border:none;
+border-radius:6px;
+background:#0071e3;
 color:white;
-text-decoration:none;
-font-weight:bold;
 cursor:pointer;
+margin:4px;
 }
 
 .page{display:none;padding:20px;}
 .active{display:block;}
 
 .card{
-background:blue;
-padding:20px;
-border-radius:15px;
-margin:20px auto;
+background:#1e3a8a;
+padding:15px;
+border-radius:10px;
 max-width:500px;
+margin:auto;
 }
 
-button{
-padding:10px;
-border:none;
-border-radius:10px;
-background:#0071e3;
-color:white;
-cursor:pointer;
-margin:5px;
+/* AVATAR */
+#stage{
+display:flex;
+justify-content:center;
+gap:60px;
+margin:10px;
 }
 
-input, textarea{
-padding:10px;
-width:80%;
-border-radius:10px;
-border:none;
-margin:5px;
-}
-
-#avatar,#avatar2{
+.character{
 width:120px;
 border-radius:50%;
+transition:0.3s;
 }
 
 .speaking{
-box-shadow:0 0 25px #00f2ff;
-transform:scale(1.05);
-}
-
-/* STORY */
-.page-turn{
-animation:flip 0.5s ease;
-}
-@keyframes flip{
-0%{transform:rotateY(0);}
-50%{transform:rotateY(-30deg);}
-100%{transform:rotateY(0);}
+transform:scale(1.2);
+box-shadow:0 0 20px cyan;
 }
 
 /* OS */
 #os{
 display:none;
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:blue;
-padding:20px;
+inset:0;
+background:#0a2a6b;
+padding:10px;
 }
 
-.app{
-display:none;
-background:#1e3a8a;
-padding:20px;
-border-radius:10px;
-margin-top:10px;
-}
-
-/* STAGE PERSONAGGI */
-#stage{
-position:relative;
-height:200px;
-overflow:hidden;
-margin-top:10px;
-}
-
-.character{
-width:120px;
-position:absolute;
-top:40px;
-left:-150px;
-transition:1s ease;
-}
-
-.enter{ left:40%; }
-.left{ left:-150px; }
-.right{ left:120%; }
-
+.app{display:none;margin-top:10px;}
+input,textarea{padding:6px;width:80%;}
 </style>
 </head>
 
 <body>
 
-<!-- STAGE -->
+<!-- AVATAR -->
 <div id="stage">
 <img id="oreste" class="character" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
 <img id="virus" class="character" src="https://i.ibb.co/wHZ8KG6/logo.jpg">
 </div>
 
-<h1>Oreste AI + OS</h1>
+<h2>Oreste AI</h2>
 
 <nav>
-<img src="https://i.ibb.co/wHZ8KG6/logo.jpg">
-<a onclick="show('home')">Home</a>
-<a onclick="show('assistant')">Assistente</a>
-<a onclick="show('storybook')">Storybook</a>
-<a onclick="openOS()">OS</a>
+<button onclick="show('home')">Home</button>
+<button onclick="show('ai')">Oreste AI</button>
+<button onclick="show('story')">Story</button>
+<button onclick="openOS()">OS</button>
 </nav>
 
 <!-- HOME -->
 <div id="home" class="page active">
 <div class="card">
-<img id="avatar" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
-<h2>Oreste AI</h2>
+<h3>Sistema attivo</h3>
+<p>AI + OS stabile</p>
 </div>
 </div>
 
-<!-- ASSISTENTE -->
-<div id="assistant" class="page">
+<!-- AI -->
+<div id="ai" class="page">
 <div class="card">
-<img id="avatar2" src="https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png">
-<h2>Assistente</h2>
-
-<input id="input">
+<h3>Assistente</h3>
+<input id="input" placeholder="scrivi o parla">
 <br>
-<button onclick="run()">Invia</button>
-<button onclick="voice()">🎤 Parla</button>
+<button onclick="ask()">Invia</button>
+<button onclick="voice()">🎤 Voce</button>
 </div>
 </div>
 
-<!-- STORYBOOK -->
-<div id="storybook" class="page">
-<h3 id="storyChar"></h3>
-
-<div class="card" id="storyCard">
-<img id="storyImg" style="width:120px;border-radius:50%;">
-<h2 id="storyTitle"></h2>
-<p id="storyText"></p>
-
-<div id="choices"></div>
-
-<button onclick="prev()">⬅</button>
-<button onclick="next()">➡</button>
+<!-- STORY -->
+<div id="story" class="page">
+<div class="card">
+<h3>Story</h3>
+<p id="storyText">Premi avanti</p>
+<button onclick="nextStory()">Avanti</button>
 </div>
 </div>
 
 <!-- OS -->
 <div id="os">
-<h2>Oreste OS</h2>
 
-<button onclick="showApp('calc')">Calcolatrice</button>
-<button onclick="showApp('notes')">Blocco Note</button>
-<button onclick="showApp('browser')">Oreste OS Browser</button>
+<h3>Oreste OS</h3>
+
+<button onclick="app('calc')">Calcolatrice</button>
+<button onclick="app('browser')">Oreste OS browser</button>
+<button onclick="app('antivirus')">Antivirus</button>
 <button onclick="closeOS()">Chiudi</button>
 
+<!-- CALC -->
 <div id="calc" class="app">
-<input id="a" placeholder="A">
-<input id="b" placeholder="B">
-<p id="result"></p>
+<input id="a">
+<input id="b">
 <button onclick="sum()">+</button>
 <button onclick="sub()">-</button>
-<button onclick="mul()">×</button>
-<button onclick="div()">÷</button>
+<p id="res"></p>
 </div>
 
-<div id="notes" class="app">
-<textarea id="note" placeholder="Scrivi qui..."></textarea>
-<br>
-<button onclick="saveNote()">Salva TXT</button>
-<button onclick="loadNote()">Carica</button>
-</div>
-
+<!-- BROWSER -->
 <div id="browser" class="app">
 <input id="url" placeholder="google.com">
 <button onclick="go()">Vai</button>
+</div>
+
+<!-- ANTIVIRUS -->
+<div id="antivirus" class="app">
+<button onclick="scan()">Scansiona</button>
+<p id="status"></p>
 </div>
 
 </div>
@@ -218,151 +160,129 @@ let i = 0;
 
 /* NAV */
 function show(p){
-document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-document.getElementById(p).classList.add("active");
-
-if(p==="storybook"){
-i=0;
-render();
-}
+document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+document.getElementById(p).classList.add('active');
 }
 
-/* VOCE */
-function speak(text){
+/* SPEECH + AVATAR */
+function speak(t){
 speechSynthesis.cancel();
-let msg=new SpeechSynthesisUtterance(text);
-msg.lang="it-IT";
-speechSynthesis.speak(msg);
+
+let u = new SpeechSynthesisUtterance(t);
+u.lang = "it-IT";
+
+u.onstart = ()=>{
+oreste.classList.add("speaking");
+virus.classList.add("speaking");
+};
+
+u.onend = ()=>{
+oreste.classList.remove("speaking");
+virus.classList.remove("speaking");
+};
+
+speechSynthesis.speak(u);
+}
+
+/* AI + HANDLE */
+function handle(text){
+text = text.toLowerCase();
+
+let r = "";
+
+if(text.includes("ciao")) r = "Ciao! Sono Oreste AI.";
+else if(text.includes("chi sei")) r = "Sono il tuo assistente.";
+else if(text.includes("ora")) r = new Date().toLocaleTimeString();
+else if(text.includes("data")) r = new Date().toLocaleDateString();
+else if(text.includes("google")){
+window.open("https://www.google.com","_blank");
+r = "Apro Google.";
+}
+else r = "Hai detto: " + text;
+
+speak(r);
+}
+
+/* INPUT */
+function ask(){
+let t = document.getElementById("input").value;
+handle(t);
+}
+
+/* VOICE */
+function voice(){
+let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Voice non supportato");
+return;
+}
+
+let r = new SpeechRecognition();
+r.lang = "it-IT";
+
+r.onresult = (e)=>{
+let text = e.results[0][0].transcript;
+document.getElementById("input").value = text;
+handle(text);
+};
+
+r.start();
 }
 
 /* STORY */
-const pages=[
-{character:"Oreste AI",title:"Risveglio",text:"Mi sto attivando nel sistema.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Continua",n:1}]},
-{character:"Oreste AI",title:"Sistema",text:"Sto analizzando il mondo digitale.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Avanti",n:2}]},
-{character:"Virus",title:"Errore",text:"Qualcosa sta attaccando il sistema!",img:"https://i.ibb.co/wHZ8KG6/logo.jpg",choices:[{t:"Combatti",n:3}]},
-{character:"Oreste AI",title:"Battaglia",text:"Sto proteggendo il sistema.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Vittoria",n:4}]},
-{character:"Oreste AI",title:"Fine",text:"Sistema salvato con successo.",img:"https://i.ibb.co/fzBXJPK1/oreste-ai-avatar.png",choices:[{t:"Restart",n:0}]}
+function nextStory(){
+let s = [
+"Oreste AI si avvia...",
+"Analisi sistema...",
+"Connessione attiva...",
+"Protezione attiva...",
+"Sistema stabile"
 ];
 
-/* ANIMAZIONE PERSONAGGI */
-function moveCharacters(scene){
-let o=document.getElementById("oreste");
-let v=document.getElementById("virus");
-
-o.classList.remove("enter","left","right");
-v.classList.remove("enter","left","right");
-
-if(scene==="Risveglio"||scene==="Sistema"){
-o.classList.add("enter");
-v.classList.add("right");
+document.getElementById("storyText").innerText = s[i];
+speak(s[i]);
+i = (i + 1) % s.length;
 }
-
-if(scene==="Errore"){
-o.classList.add("left");
-v.classList.add("enter");
-}
-
-if(scene==="Battaglia"){
-o.classList.add("enter");
-v.classList.add("enter");
-}
-
-if(scene==="Fine"){
-o.classList.add("enter");
-v.classList.add("right");
-}
-}
-
-/* RENDER STORY */
-function render(){
-
-let p = pages[i];
-
-storyChar.innerText=p.character;
-storyTitle.innerText=p.title;
-storyText.innerText=p.text;
-storyImg.src=p.img;
-
-moveCharacters(p.title);
-
-document.getElementById("choices").innerHTML="";
-p.choices.forEach(c=>{
-let b=document.createElement("button");
-b.innerText=c.t;
-b.onclick=()=>{i=c.n;render();};
-document.getElementById("choices").appendChild(b);
-});
-
-speak(p.character+" dice: "+p.text);
-
-let card=document.getElementById("storyCard");
-card.classList.remove("page-turn");
-void card.offsetWidth;
-card.classList.add("page-turn");
-}
-
-function next(){if(i<pages.length-1){i++;render();}}
-function prev(){if(i>0){i--;render();}}
 
 /* OS */
-function openOS(){document.getElementById("os").style.display="block";}
-function closeOS(){document.getElementById("os").style.display="none";}
+function openOS(){ os.style.display = "block"; }
+function closeOS(){ os.style.display = "none"; }
 
-function showApp(a){
-document.querySelectorAll(".app").forEach(x=>x.style.display="none");
-document.getElementById(a).style.display="block";
+function app(id){
+document.querySelectorAll('.app').forEach(a=>a.style.display='none');
+document.getElementById(id).style.display='block';
 }
 
 /* CALC */
-function sum(){result.innerText=+a.value + +b.value;}
-function sub(){result.innerText=+a.value - +b.value;}
-function mul(){result.innerText=+a.value * +b.value;}
-function div(){result.innerText=+a.value / +b.value;}
-
-/* NOTE (FIX COMPLETO) */
-function saveNote(){
-let text=document.getElementById("note").value;
-localStorage.setItem("note",text);
-
-let blob=new Blob([text],{type:"text/plain"});
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="nota-oreste.txt";
-a.click();
+function sum(){
+res.innerText = Number(a.value) + Number(b.value);
 }
 
-function loadNote(){
-document.getElementById("note").value=
-localStorage.getItem("note")||"";
+function sub(){
+res.innerText = Number(a.value) - Number(b.value);
 }
 
 /* BROWSER */
 function go(){
-let t=document.getElementById("url").value;
-if(!t) return;
-if(!t.startsWith("http")) t="https://"+t;
-window.open(t);
+let u = url.value;
+if(!u.startsWith("http")) u = "https://" + u;
+window.open(u,"_blank");
 }
 
-/* ASSISTENTE */
-function run(){
-window.open("https://google.com/search?q="+input.value);
-speak("Cerco "+input.value);
-}
+/* ANTIVIRUS */
+function scan(){
+status.innerText = "Scansione...";
 
-function voice(){
-const SR=window.SpeechRecognition||webkitSpeechRecognition;
-const r=new SR();
-r.lang="it-IT";
-r.onresult=e=>{
-input.value=e.results[0][0].transcript;
-run();
-};
-r.start();
+setTimeout(()=>{
+let r = Math.random()>0.5 ? "Virus rilevato" : "Sistema pulito";
+status.innerText = r;
+speak(r);
+},1200);
 }
 
 /* START */
-window.onload=()=>speak("Benvenuto in Oreste AI");
+window.onload = ()=>speak("Benvenuto in Oreste AI");
 
 </script>
 
